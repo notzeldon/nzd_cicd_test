@@ -59,7 +59,7 @@ jobs:
           key: ${{ secrets.SSH_KEY }}
           script: |
             mkdir -p /srv/test_cicd
-            cd -p /srv/test_cicd
+            cd /srv/test_cicd
             git clone git@github.com:notzeldon/nzd_cicd_test.git test_project
             cd test_project
             docker build -t test_django_proj .
