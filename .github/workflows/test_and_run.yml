@@ -33,7 +33,7 @@ jobs:
       # Runs a set of commands using the runners shell
       - name: Tests
         run: |
-          docker run --rm --name test_django_run_tests -p 8080:8080 test_django python3 manage.py test
+          docker run --rm --name test_django_run_tests -p test_django python3 manage.py test
 
   deploy:
     name: Deploy
