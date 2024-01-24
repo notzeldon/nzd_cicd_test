@@ -44,6 +44,7 @@ jobs:
       - name: Deploy
         run: |
           if [ $( docker ps -a | grep test_django | wc -l ) -gt 0 ]; then
+            docker stop test_django
             docker rm test_django
           fi
           docker run --name test_django -p 8080:8080 -d test_django
