@@ -33,7 +33,8 @@ jobs:
       # Runs a set of commands using the runners shell
       - name: Tests
         run: |
-          docker run --rm --name test_django -p 8080:8080 test_django python3 manage.py test
+          docker run --rm --name test_django -p 8080:8080 test_django_run_tests python3 manage.py test
+          docker rm test_django_run_tests
 
   deploy:
     name: Deploy
@@ -43,5 +44,9 @@ jobs:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - name: Deploy
         run: |
-          docker run --rm --name test_django -p 8080:8080 -d test_django
+          if [ $( docker ps -a | grep test_django | wc -l ) -gt 0 ]; then
+            docker rm test_django
+          fi
+          docker run --name test_django -p 8080:8080 -d test_django
+
 
