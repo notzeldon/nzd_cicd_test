@@ -29,6 +29,10 @@ jobs:
       # Runs a single command using the runners shell
       - name: Run docker build
         run: docker build -t test_django .
+        
+      # Runs a single command using the runners shell
+      - name: Drop old container
+        run: docker rm test_django
 
       # Runs a set of commands using the runners shell
       - name: Tests
