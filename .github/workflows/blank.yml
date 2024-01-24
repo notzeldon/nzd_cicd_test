@@ -33,4 +33,15 @@ jobs:
       # Runs a set of commands using the runners shell
       - name: Tests
         run: |
+          docker run --name test_django -p 8080:8080 test_django python3 manage.py test
+
+  deploy:
+    name: Deploy
+    needs: [ build ]
+    runs-on: self-hosted
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - name: Deploy
+        run: |
           docker run --name test_django -p 8080:8080 -d test_django
+
