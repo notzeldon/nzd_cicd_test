@@ -9,4 +9,5 @@ RUN pip3 install -r requirements.txt
 
 EXPOSE 8080
 
-CMD python3 manage migrate && python manage.py runserver 0.0.0.0:8080
+ENV PYTHONUNBUFFERED=noninteractive
+CMD python3 manage.py migrate && python3 manage.py runserver 0.0.0.0:8080
