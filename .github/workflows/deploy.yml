@@ -1,0 +1,70 @@
+# This is a basic workflow to help you get started with Actions
+
+name: Merge CD
+on:
+  pull_request:
+    types:
+      - closed
+    branches:
+      - "main"
+  workflow_dispatch:
+
+jobs:
+  if_merged:
+    if: github.event.pull_request.merged == true
+    runs-on: self-hosted
+    steps:
+    - run: |
+        echo The PR was merged
+
+  build:
+    name: Test merged
+    # The type of runner that the job will run on
+    runs-on: self-hosted
+
+    needs: [ if_merged ]
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v3
+
+      # Runs a single command using the runners shell
+      - name: Run docker build
+        run: |
+          docker build -t test_django .
+      # Runs a set of commands using the runners shell
+      - name: Tests
+        run: |
+          docker run --rm --name test_django_run_tests -p 8080:8080 test_django python3 manage.py test
+
+  deploy:
+    name: Deploy
+    needs: [ build ]
+    runs-on: self-hosted
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - name: Deploy
+        run: |
+          if [ $( docker ps -a | grep test_django | wc -l ) -gt 0 ]; then
+            docker rm test_django
+          fi
+          docker run --name test_django -p 8880:8080 -d test_django
+
+      - name: Production deploy
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_KEY }}
+          script: |
+            mkdir -p /srv/test_cicd
+            cd -p /srv/test_cicd
+            git clone git@github.com:notzeldon/nzd_cicd_test.git test_project
+            cd test_project
+            docker build -t test_django_proj .
+            if [ $( docker ps -a | grep test_django_proj | wc -l ) -gt 0 ]; then
+              docker rm test_django
+            fi
+            docker run --name test_django_proj -p 9880:8080 -d test_django_proj
+
