@@ -34,7 +34,6 @@ jobs:
       - name: Tests
         run: |
           docker run --rm --name test_django_run_tests -p 8080:8080 test_django python3 manage.py test
-          docker rm test_django_run_tests
 
   deploy:
     name: Deploy
