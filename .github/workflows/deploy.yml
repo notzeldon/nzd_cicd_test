@@ -10,6 +10,13 @@ on:
   workflow_dispatch:
 
 jobs:
+  print_info:
+    name: print info
+    runs-on: self-hosted
+    steps:
+    - run: |
+        echo ${{github.event.pull_request.merged}}
+
   if_merged:
     if: github.event.pull_request.merged == true
     runs-on: self-hosted
