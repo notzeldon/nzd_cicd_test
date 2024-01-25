@@ -4,8 +4,9 @@ name: Merge CD
 on:
   pull_request:
     types:
-      - closed
+      - opened
       - edited
+      - closed
     branches:
       - "main"
   merge_group:
