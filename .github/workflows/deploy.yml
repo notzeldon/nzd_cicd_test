@@ -33,7 +33,7 @@ jobs:
     # The type of runner that the job will run on
     runs-on: self-hosted
 
-    needs: [ if_merged ]
+#    needs: [ if_merged ]
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
@@ -62,7 +62,9 @@ jobs:
           username: ${{ secrets.USER }}
           key: ${{ secrets.SSH_KEY }}
           script: |
+            print $USER
             sudo su webmaster
+            print $USER
             cd /srv/
             mkdir -p test_cicd
             cd test_cicd
