@@ -62,19 +62,13 @@ jobs:
           username: ${{ secrets.USER }}
           key: ${{ secrets.SSH_KEY }}
           script: |
-            echo $USER
-            sudo su webmaster
-            echo $USER
-            ls 
-            cd /srv/
-            ls -lah
-#            mkdir -p test_cicd
-#            cd test_cicd
-#            git clone ${{ github.repositoryUrl }} test_project
-#            cd test_project
-#            docker build -t test_django_proj .
-#            if [ $( docker ps -a | grep test_django_proj | wc -l ) -gt 0 ]; then
-#              docker stop test_django
-#              docker rm test_django
-#            fi
-#            docker run --name test_django_proj -p 9880:8080 -d test_django_proj
+            mkdir -p ~/projects/test_cicd
+            cd ~/projects/test_cicd
+            git clone ${{ github.repositoryUrl }} test_project
+            cd test_project
+            docker build -t test_django_proj .
+            if [ $( docker ps -a | grep test_django_proj | wc -l ) -gt 0 ]; then
+              docker stop test_django
+              docker rm test_django
+            fi
+            docker run --name test_django_proj -p 9880:8080 -d test_django_proj
