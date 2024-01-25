@@ -62,9 +62,9 @@ jobs:
           username: ${{ secrets.USER }}
           key: ${{ secrets.SSH_KEY }}
           script: |
-            print $USER
+            echo $USER
             sudo su webmaster
-            print $USER
+            echo $USER
             ls 
             cd /srv/
             ls -lah
