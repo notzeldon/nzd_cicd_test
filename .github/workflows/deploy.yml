@@ -64,7 +64,7 @@ jobs:
           script: |
             mkdir -p ~/projects/test_cicd
             cd ~/projects/test_cicd
-            git clone ${{ github.repositoryUrl }} test_project
+            git clone git@github.com:${{ github.repository }} test_project
             cd test_project
             docker build -t test_django_proj .
             if [ $( docker ps -a | grep test_django_proj | wc -l ) -gt 0 ]; then
