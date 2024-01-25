@@ -10,6 +10,13 @@ on:
   workflow_dispatch:
 
 jobs:
+  print_info:
+    name: print info
+    runs-on: self-hosted
+    steps:
+    - run: |
+        echo ${{github.event.pull_request.merged}}
+
   if_merged:
     if: github.event.pull_request.merged == true
     runs-on: self-hosted
@@ -36,7 +43,7 @@ jobs:
       # Runs a set of commands using the runners shell
       - name: Tests
         run: |
-          docker run --rm --name test_django_run_tests -p 8080:8080 test_django python3 manage.py test
+          docker run --rm --name test_django_run_tests test_django python3 manage.py test
 
   deploy:
     name: Deploy
@@ -44,13 +51,6 @@ jobs:
     runs-on: self-hosted
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - name: Deploy
-        run: |
-          if [ $( docker ps -a | grep test_django | wc -l ) -gt 0 ]; then
-            docker rm test_django
-          fi
-          docker run --name test_django -p 8880:8080 -d test_django
-
       - name: Production deploy
         uses: appleboy/ssh-action@master
         with:
