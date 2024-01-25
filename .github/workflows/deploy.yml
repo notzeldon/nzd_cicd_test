@@ -63,9 +63,10 @@ jobs:
           key: ${{ secrets.SSH_KEY }}
           script: |
             sudo su webmaster
-            mkdir -p /srv/test_cicd
-            cd /srv/test_cicd
-            git clone git@github.com:notzeldon/nzd_cicd_test.git test_project
+            cd /srv/
+            mkdir -p test_cicd
+            cd test_cicd
+            git clone ${{ github.repositoryUrl }} test_project
             cd test_project
             docker build -t test_django_proj .
             if [ $( docker ps -a | grep test_django_proj | wc -l ) -gt 0 ]; then
