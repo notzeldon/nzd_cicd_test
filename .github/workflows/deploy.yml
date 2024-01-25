@@ -13,9 +13,13 @@ jobs:
   print_info:
     name: print info
     runs-on: self-hosted
+    env:
+      GITHUB_CONTEXT: ${{ toJSON(github) }}
     steps:
     - run: |
         echo ${{github.event.pull_request.merged}}
+        echo ${{ toJson(github.event.pull_request.merged) }}
+        echo "$GITHUB_CONTEXT"
 
   if_merged:
     if: github.event.pull_request.merged == true
@@ -58,6 +62,7 @@ jobs:
           username: ${{ secrets.USER }}
           key: ${{ secrets.SSH_KEY }}
           script: |
+            sudo su webmaster
             mkdir -p /srv/test_cicd
             cd /srv/test_cicd
             git clone git@github.com:notzeldon/nzd_cicd_test.git test_project
