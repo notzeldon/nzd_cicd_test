@@ -1,0 +1,51 @@
+name: Развертывание ветки разработки
+on:
+  pull_request:
+    types:
+      - opened
+      - edited
+      - closed
+    branches:
+      - "feature/**"
+  workflow_dispatch:
+
+jobs:
+
+  build:
+    name: Сборка
+    runs-on: self-hosted
+    env:
+      GITHUB_CONTEXT: ${{ toJSON(github) }}
+    steps:
+      - name: Получение кода ветки
+        uses: actions/checkout@v3
+      - name: Генерация имени контейнера и образа
+        run: | 
+          export CONTAINER_NAME_${{ github.sha }}=$( echo "test_branch_${{ github.head_ref }}" | sha256sum )
+          export IMAGE_NAME_${{ github.sha }}=$( echo "test_branch_${{ github.head_ref }}" | sha256sum )
+          echo "Container name: $CONTAINER_NAME_${{ github.sha }}"
+          echo "Image name: $IMAGE_NAME_${{ github.sha }}"
+      - name: Сборка
+        run: |
+          docker build -t $CONTAINER_NAME_${{ github.sha }} .
+
+  run_tests:
+    name: Запуск тестов
+    runs-on: self-hosted
+    needs:
+      - build
+    steps:
+      - run: |
+          # TODO: Как выбрать порт?
+          docker run -rm --name test_$CONTAINER_NAME_${{ github.sha }} -d $IMAGE_NAME_${{ github.sha }}" python3 manage.py test
+
+  run_container:
+    name: Запуск контейнера для ручного тестирования
+    runs-on: self-hosted
+    needs:
+      - build
+    steps:
+      - name: Запуск контейнера
+        run: |
+          # TODO: Как выбрать порт?
+          docker run -rm --name $CONTAINER_NAME_${{ github.sha }} -p 8888:8080 -d $IMAGE_NAME_${{ github.sha }}"
