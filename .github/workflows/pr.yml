@@ -1,0 +1,21 @@
+name: "Автоматическое создание Pull Request"
+
+# run this workflow only on new feature branches, not when they're merged to main
+on:
+  push:
+    branches-ignore: [
+      "main",
+    ]
+
+jobs:
+  create_pr_repo_sync:
+    runs-on: self-hosted
+    steps:
+      - name: "Получение обновлений"
+        uses: actions/checkout@v3
+      - name: "Создание Pull Request"
+        uses: peter-evans/create-pull-request@v3
+        with:
+          base: 'pre_master'
+          title: 'Auto-generated Pull Request'
+          token: ${{ secrets.PAT }}
